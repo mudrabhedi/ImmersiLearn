@@ -9,7 +9,7 @@ import Quizzes from './pages/Quizzes';
 import LevelsRewards from './pages/LevelsRewards';
 import Profile from './pages/Profile';
 import Navbar from "./components/Navbar";
-import AiTutor from "./pages/Aitutor";
+import AiTutor from "./pages/AiTutor";
 
 
 function App() {
