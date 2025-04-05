@@ -12,6 +12,8 @@ import Navbar from "./components/Navbar";
 import AiTutor from "./pages/Aitutor";
 import SignupProfessor from "./pages/SignUpProfessor";
 import LoginProfessor from "./pages/LoginProfessor";
+import AiTutor from "./pages/AiTutor";
+
 
 
 function App() {
