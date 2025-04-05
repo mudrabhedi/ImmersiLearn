@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 const BiologyAR = () => {
   const arItems = [
@@ -9,6 +9,9 @@ const BiologyAR = () => {
   ];
 
   const viewerRefs = useRef([]);
+  const videoRef = useRef(null); // Reference to video element
+  const canvasRef = useRef(null); // Reference to canvas for drawing landmarks
+  const [handDetected, setHandDetected] = useState(false);
 
   useEffect(() => {
     const script = document.createElement("script");
@@ -31,7 +34,10 @@ const BiologyAR = () => {
   }, []);
 
   const setupHandTracking = () => {
-    const videoElement = document.getElementById("video");
+    const videoElement = videoRef.current;
+    const canvasElement = canvasRef.current;
+    const ctx = canvasElement.getContext("2d");
+
     const hands = new window.Hands(); // MediaPipe Hands instance
     hands.setOptions({
       maxNumHands: 1,
@@ -43,7 +49,11 @@ const BiologyAR = () => {
     hands.onResults((results) => {
       if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
         const handLandmarks = results.multiHandLandmarks[0];
+        setHandDetected(true);
+        drawHandLandmarks(handLandmarks, ctx); // Draw hand landmarks on the canvas
         moveModelWithHand(handLandmarks);
+      } else {
+        setHandDetected(false);
       }
     });
 
@@ -62,6 +72,21 @@ const BiologyAR = () => {
     };
 
     startCamera();
+  };
+
+  const drawHandLandmarks = (handLandmarks, ctx) => {
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height); // Clear previous frame
+
+    handLandmarks.forEach((landmark) => {
+      const x = landmark.x * ctx.canvas.width;
+      const y = landmark.y * ctx.canvas.height;
+
+      // Draw each point (landmark)
+      ctx.beginPath();
+      ctx.arc(x, y, 5, 0, 2 * Math.PI);
+      ctx.fillStyle = "red";
+      ctx.fill();
+    });
   };
 
   const moveModelWithHand = (handLandmarks) => {
@@ -95,7 +120,24 @@ const BiologyAR = () => {
             className="backdrop-blur-md bg-white/20 border border-white/30 rounded-xl px-6 py-6 shadow-md text-center"
           >
             <h2 className="text-2xl font-semibold mb-4 text-[#3B82F6]">{item.title}</h2>
-            <video id="video" width="640" height="480" style={{ display: "none" }}></video>
+            <video
+              ref={videoRef}
+              id="video"
+              width="640"
+              height="480"
+              style={{ display: "none" }}
+            ></video>
+            <canvas
+              ref={canvasRef}
+              width="640"
+              height="480"
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                pointerEvents: "none",
+              }}
+            ></canvas>
             <model-viewer
               ref={(el) => (viewerRefs.current[index] = el)}
               src={item.modelPath}
@@ -111,6 +153,13 @@ const BiologyAR = () => {
             >
               View in AR
             </button>
+
+            {/* Display hand detected or not */}
+            {handDetected ? (
+              <div className="text-green-500 mt-2">Hand Detected</div>
+            ) : (
+              <div className="text-red-500 mt-2">No Hand Detected</div>
+            )}
           </div>
         ))}
       </div>
