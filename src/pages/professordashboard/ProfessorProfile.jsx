@@ -38,10 +38,19 @@ const ProfessorProfile = () => {
     setProfile({ ...profile, [name]: value });
   };
 
-  const handleSave = () => {
-    setIsEditing(false);
-    // Here you would typically send the updated profile to your backend
+  const handleSave = async () => {
+    try {
+      const token = localStorage.getItem('authToken');
+      await axios.put('https://immersilearn-backend.onrender.com/api/professor/profile', profile, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Error updating profile:', error);
+    }
   };
+
+  if (!profile) return <div>Loading...</div>;
 
   return (
     <div className="flex min-h-screen bg-gray-50">
