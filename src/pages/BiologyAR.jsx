@@ -15,7 +15,66 @@ const BiologyAR = () => {
     script.type = "module";
     script.src = "https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js";
     document.head.appendChild(script);
+
+    // Load MediaPipe Hands for hand tracking
+    const handTrackingScript = document.createElement("script");
+    handTrackingScript.src = "https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.3.1626204891/mediapipe-hands.js";
+    document.head.appendChild(handTrackingScript);
+
+    handTrackingScript.onload = () => {
+      setupHandTracking();
+    };
+
+    return () => {
+      document.head.removeChild(handTrackingScript);
+    };
   }, []);
+
+  const setupHandTracking = () => {
+    const videoElement = document.getElementById("video");
+    const hands = new window.Hands(); // MediaPipe Hands instance
+    hands.setOptions({
+      maxNumHands: 1,
+      modelComplexity: 1,
+      minDetectionConfidence: 0.5,
+      minTrackingConfidence: 0.5,
+    });
+
+    hands.onResults((results) => {
+      if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+        const handLandmarks = results.multiHandLandmarks[0];
+        moveModelWithHand(handLandmarks);
+      }
+    });
+
+    const startCamera = async () => {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+      });
+      videoElement.srcObject = stream;
+
+      const camera = new window.Camera(videoElement, {
+        onFrame: async () => {
+          await hands.send({ image: videoElement });
+        },
+      });
+      camera.start();
+    };
+
+    startCamera();
+  };
+
+  const moveModelWithHand = (handLandmarks) => {
+    const x = handLandmarks[9].x * window.innerWidth;
+    const y = handLandmarks[9].y * window.innerHeight;
+
+    // Move the model based on hand position
+    viewerRefs.current.forEach((viewer) => {
+      if (viewer) {
+        viewer.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+      }
+    });
+  };
 
   const handleARView = (index) => {
     const viewer = viewerRefs.current[index];
@@ -36,7 +95,7 @@ const BiologyAR = () => {
             className="backdrop-blur-md bg-white/20 border border-white/30 rounded-xl px-6 py-6 shadow-md text-center"
           >
             <h2 className="text-2xl font-semibold mb-4 text-[#3B82F6]">{item.title}</h2>
-            <video id="video" width="640" height="480" style="display:none"></video>
+            <video id="video" width="640" height="480" style={{ display: "none" }}></video>
             <model-viewer
               ref={(el) => (viewerRefs.current[index] = el)}
               src={item.modelPath}
