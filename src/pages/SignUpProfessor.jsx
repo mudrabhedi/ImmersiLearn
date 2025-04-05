@@ -12,15 +12,23 @@ const SignupProfessor = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await axios.post("https://immersilearn-backend.onrender.com/api/auth/signup", formData);
-      alert(res.data.message);
-      navigate("/professor-dasboard");
-    } catch (err) {
-      alert("Signup failed: " + (err.response?.data?.message || err.message));
-    }
-  };
+  e.preventDefault();
+  setIsLoading(true);
+  try {
+    const res = await axios.post("https://immersilearn-backend.onrender.com/api/auth/signup/professor", formData);
+    alert(res.data.message);
+    navigate("/professor-dashboard");
+  } catch (err) {
+    const errorMessage = err.response?.data?.message || 
+                       err.response?.data?.error || 
+                       err.message || 
+                       'Signup failed';
+    alert("Signup failed: " + errorMessage);
+    console.error("Signup error details:", err.response?.data || err);
+  } finally {
+    setIsLoading(false);
+  }
+};
 
 
   return (
