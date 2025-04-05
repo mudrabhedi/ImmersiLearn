@@ -12,6 +12,7 @@ const BiologyAR = () => {
   const videoRef = useRef(null); // Reference to video element
   const canvasRef = useRef(null); // Reference to canvas for drawing landmarks
   const [handDetected, setHandDetected] = useState(false);
+  const [isARActive, setIsARActive] = useState(false); // To track if AR is active
 
   useEffect(() => {
     const script = document.createElement("script");
@@ -25,13 +26,16 @@ const BiologyAR = () => {
     document.head.appendChild(handTrackingScript);
 
     handTrackingScript.onload = () => {
-      setupHandTracking();
+      // Do not initialize hand tracking until AR is activated
+      if (isARActive) {
+        setupHandTracking();
+      }
     };
 
     return () => {
       document.head.removeChild(handTrackingScript);
     };
-  }, []);
+  }, [isARActive]); // Depend on isARActive state
 
   const setupHandTracking = () => {
     const videoElement = videoRef.current;
@@ -105,6 +109,7 @@ const BiologyAR = () => {
     const viewer = viewerRefs.current[index];
     if (viewer && viewer.activateAR) {
       viewer.activateAR();
+      setIsARActive(true); // Set AR active when "View in AR" is clicked
     } else {
       alert("AR not supported or model-viewer not loaded yet.");
     }
