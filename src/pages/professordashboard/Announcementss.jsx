@@ -3,20 +3,7 @@ import { FaPaperPlane, FaCalendarAlt, FaTrash } from "react-icons/fa";
 import SidePanelProf from "../../components/SidePanelProf";
 
 const Announcementss = () => {
-  const [announcements, setAnnouncements] = useState([
-    { 
-      id: 1, 
-      title: "Important Notice: Exam Tomorrow", 
-      content: "The final exam for Chemistry 101 will be held tomorrow at 10 AM in the main auditorium.",
-      date: "April 1, 2025" 
-    },
-    { 
-      id: 2, 
-      title: "New Study Material Released", 
-      content: "Chapter 5 supplementary materials are now available in the resource library.",
-      date: "April 3, 2025" 
-    },
-  ]);
+  const [announcements, setAnnouncements] = useState(null);
 
   useEffect(() => {
     const fetchAnnouncements = async () => {
