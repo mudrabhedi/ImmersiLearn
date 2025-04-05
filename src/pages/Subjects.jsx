@@ -6,10 +6,6 @@ const Subjects = () => {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-[#F0F9FF] to-[#E0F2FE] text-white relative">
-      {/* ImmerseLearn Text Logo */}
-      <h1 className="absolute top-6 left-6 text-4xl font-extrabold text-[#3B82F6] tracking-wide">
-        ImmerseLearn
-      </h1>
       
       <h1 className="text-4xl font-extrabold text-center text-[#3B82F6] mb-10">Select a Subject</h1>
       <div className="flex flex-row gap-6">
