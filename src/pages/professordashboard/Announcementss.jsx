@@ -1,40 +1,41 @@
-import React, { useState, useEffect} from "react";
-import { FaPaperPlane, FaCalendarAlt, FaTrash } from "react-icons/fa";
-import SidePanelProf from "../../components/SidePanelProf";
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { FiUpload, FiBook, FiFileText, FiCheckCircle, FiX } from 'react-icons/fi';
+import SidePanelProf from '../../components/SidePanelProf';
 
-const Announcementss = () => {
-  const [announcements, setAnnouncements] = useState(null);
+const Resourcess = () => {
+  const [resources, setResources] = useState([]);
+  const [activeTab, setActiveTab] = useState('books');
 
   useEffect(() => {
-    const fetchAnnouncements = async () => {
+    const fetchResources = async () => {
       try {
         const token = localStorage.getItem('authToken');
-        const response = await axios.get('https://immersilearn-backend.onrender.com/api/professor/announcements', {
+        const response = await axios.get('https://immersilearn-backend.onrender.com/api/professor/resources', {
           headers: { Authorization: `Bearer ${token}` }
         });
-        setAnnouncements(response.data);
+        setResources(response.data);
       } catch (error) {
-        console.error('Error fetching announcements:', error);
+        console.error('Error fetching resources:', error);
       }
     };
-    fetchAnnouncements();
+    fetchResources();
   }, []);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleAddBook = async () => {
     try {
       const token = localStorage.getItem('authToken');
-      const response = await axios.post(
-        'https://immersilearn-backend.onrender.com/api/professor/announcements',
-        newAnnouncement,
+      await axios.post(
+        'https://immersilearn-backend.onrender.com/api/professor/resources',
+        { ...bookDetails, type: 'book' },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setAnnouncements([response.data, ...announcements]);
-      setNewAnnouncement({ title: "", content: "" });
+      // Handle success
     } catch (error) {
-      console.error('Error creating announcement:', error);
+      console.error('Error adding book:', error);
     }
   };
+
 
 
   const [newAnnouncement, setNewAnnouncement] = useState({
