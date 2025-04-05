@@ -33,6 +33,24 @@ const ProfessorProfile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
 
+    useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const token = localStorage.getItem('authToken');
+        const response = await axios.get('https://immersilearn-backend.onrender.com/api/professor/profile', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setProfile(response.data);
+      } catch (error) {
+        console.error('Error fetching profile:', error);
+        if (error.response?.status === 401) {
+          navigate('/login');
+        }
+      }
+    };
+    fetchProfile();
+  }, [navigate]);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setProfile({ ...profile, [name]: value });
