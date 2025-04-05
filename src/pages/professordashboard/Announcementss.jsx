@@ -18,14 +18,45 @@ const Announcementss = () => {
     },
   ]);
 
+  useEffect(() => {
+    const fetchAnnouncements = async () => {
+      try {
+        const token = localStorage.getItem('authToken');
+        const response = await axios.get('https://immersilearn-backend.onrender.com/api/professor/announcements', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setAnnouncements(response.data);
+      } catch (error) {
+        console.error('Error fetching announcements:', error);
+      }
+    };
+    fetchAnnouncements();
+  }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const token = localStorage.getItem('authToken');
+      const response = await axios.post(
+        'https://immersilearn-backend.onrender.com/api/professor/announcements',
+        newAnnouncement,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setAnnouncements([response.data, ...announcements]);
+      setNewAnnouncement({ title: "", content: "" });
+    } catch (error) {
+      console.error('Error creating announcement:', error);
+    }
+  };
+
+
   const [newAnnouncement, setNewAnnouncement] = useState({
     title: "",
     content: ""
   });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!newAnnouncement.title || !newAnnouncement.content) return;
+  
+  
     
     const newAnn = {
       id: announcements.length + 1,
