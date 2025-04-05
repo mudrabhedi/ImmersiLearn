@@ -30,12 +30,10 @@ const Subjects = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#F0F9FF] to-[#E0F2FE] p-6">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-[#F0F9FF] to-[#E0F2FE] p-6">
       {/* Header */}
-      
-
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto">
+      <main className="max-w-4xl mx-auto w-full">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-gray-800 mb-4">Select a Subject</h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
