@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { 
   FaHeartbeat, 
-  FaUtensils , 
+  FaUtensils, 
   FaSkull, 
   FaBrain, 
   FaInfoCircle,
-  FaMobileAlt // Using FaMobileAlt instead of FaAr
+  FaMobileAlt
 } from "react-icons/fa";
 
 const BiologyAR = () => {
@@ -20,7 +20,7 @@ const BiologyAR = () => {
     { 
       title: "Digestive System", 
       modelPath: "/models/digestivesystem.glb",
-      icon: <FaUtensils  className="text-4xl text-amber-500 mb-3" />,
+      icon: <FaUtensils className="text-4xl text-amber-500 mb-3" />,
       description: "Visualize the complete digestive tract from mouth to intestines"
     },
     { 
@@ -71,7 +71,6 @@ const BiologyAR = () => {
   };
 
   return (
-
     <div className="min-h-screen bg-gradient-to-br from-[#F0F9FF] to-[#E0F2FE] font-sans px-6 py-16">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
@@ -81,26 +80,6 @@ const BiologyAR = () => {
             Explore interactive 3D models of human anatomy in augmented reality
           </p>
         </div>
-
-    <div className="min-h-screen bg-gradient-to-br from-[#F0F9FF] to-[#E0F2FE] font-sans text-white px-6 py-10">
-      <h1 className="text-3xl font-extrabold text-center text-[#3B82F6] mb-10">Biology AR Models</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
-        {arItems.map((item, index) => (
-          <div
-            key={index}
-            className="backdrop-blur-md bg-white/20 border border-white/30 rounded-xl px-6 py-6 shadow-md text-center"
-          >
-            <h2 className="text-2xl font-semibold mb-4 text-[#3B82F6]">{item.title}</h2>
-
-            <model-viewer
-              ref={(el) => (viewerRefs.current[index] = el)}
-              src={item.modelPath}
-              ar
-              ar-modes="scene-viewer webxr quick-look"
-              camera-controls
-              style={{ display: "none" }}
-            ></model-viewer>
-
 
         {/* Model Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
