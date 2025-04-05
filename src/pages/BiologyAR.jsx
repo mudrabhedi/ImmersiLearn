@@ -71,7 +71,7 @@ const BiologyAR = () => {
   };
 
   return (
-<<<<<<< HEAD
+
     <div className="min-h-screen bg-gradient-to-br from-[#F0F9FF] to-[#E0F2FE] font-sans px-6 py-16">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
@@ -81,7 +81,7 @@ const BiologyAR = () => {
             Explore interactive 3D models of human anatomy in augmented reality
           </p>
         </div>
-=======
+
     <div className="min-h-screen bg-gradient-to-br from-[#F0F9FF] to-[#E0F2FE] font-sans text-white px-6 py-10">
       <h1 className="text-3xl font-extrabold text-center text-[#3B82F6] mb-10">Biology AR Models</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
@@ -100,7 +100,7 @@ const BiologyAR = () => {
               camera-controls
               style={{ display: "none" }}
             ></model-viewer>
->>>>>>> 74c1bbb709e06b0f45b8b333fc28a8eb39859b28
+
 
         {/* Model Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
