@@ -2,48 +2,123 @@ import React, { useState } from "react";
 import { FaPaperPlane, FaCalendarAlt, FaTrash } from "react-icons/fa";
 import SidePanelProf from "../../components/SidePanelProf";
 
+import React, { useEffect } from "react";
+// ... other imports
+
 const Announcementss = () => {
-  const [announcements, setAnnouncements] = useState([
-    { 
-      id: 1, 
-      title: "Important Notice: Exam Tomorrow", 
-      content: "The final exam for Chemistry 101 will be held tomorrow at 10 AM in the main auditorium.",
-      date: "April 1, 2025" 
-    },
-    { 
-      id: 2, 
-      title: "New Study Material Released", 
-      content: "Chapter 5 supplementary materials are now available in the resource library.",
-      date: "April 3, 2025" 
-    },
-  ]);
+  const [announcements, setAnnouncements] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const [newAnnouncement, setNewAnnouncement] = useState({
-    title: "",
-    content: ""
-  });
+  // Fetch announcements on component mount
+  useEffect(() => {
+    const fetchAnnouncements = async () => {
+      try {
+        setIsLoading(true);
+        const token = localStorage.getItem('authToken');
+        
+        const response = await fetch('https://immersilearn-backend.onrender.com/api/professor/announcements', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
 
-  const handleSubmit = (e) => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch announcements');
+        }
+
+        const data = await response.json();
+        
+        // Format the date for display
+        const formattedAnnouncements = data.map(announcement => ({
+          id: announcement._id,
+          title: announcement.title,
+          content: announcement.content,
+          date: new Date(announcement.createdAt).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          })
+        }));
+
+        setAnnouncements(formattedAnnouncements);
+      } catch (err) {
+        console.error('Error fetching announcements:', err);
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchAnnouncements();
+  }, []);
+
+  // Update handleSubmit to post to your backend
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!newAnnouncement.title || !newAnnouncement.content) return;
     
-    const newAnn = {
-      id: announcements.length + 1,
-      title: newAnnouncement.title,
-      content: newAnnouncement.content,
-      date: new Date().toLocaleDateString('en-US', { 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
-      }),
-    };
-    
-    setAnnouncements([newAnn, ...announcements]);
-    setNewAnnouncement({ title: "", content: "" });
+    try {
+      const token = localStorage.getItem('authToken');
+      const response = await fetch('https://immersilearn-backend.onrender.com/api/professor/announcements', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          title: newAnnouncement.title,
+          content: newAnnouncement.content
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create announcement');
+      }
+
+      const newAnn = await response.json();
+      
+      // Add the new announcement to the state
+      setAnnouncements([{
+        id: newAnn._id,
+        title: newAnn.title,
+        content: newAnn.content,
+        date: new Date(newAnn.createdAt).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        })
+      }, ...announcements]);
+      
+      setNewAnnouncement({ title: "", content: "" });
+    } catch (err) {
+      console.error('Error creating announcement:', err);
+      setError(err.message);
+    }
   };
 
-  const handleDelete = (id) => {
-    setAnnouncements(announcements.filter(ann => ann.id !== id));
+  // Update handleDelete to delete from backend
+  const handleDelete = async (id) => {
+    try {
+      const token = localStorage.getItem('authToken');
+      const response = await fetch(`https://immersilearn-backend.onrender.com/api/professor/announcements/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete announcement');
+      }
+
+      // Remove the announcement from state if deletion was successful
+      setAnnouncements(announcements.filter(ann => ann.id !== id));
+    } catch (err) {
+      console.error('Error deleting announcement:', err);
+      setError(err.message);
+    }
   };
 
   return (
