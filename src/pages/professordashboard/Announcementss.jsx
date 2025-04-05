@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect} from "react";
 import { FaPaperPlane, FaCalendarAlt, FaTrash } from "react-icons/fa";
 import SidePanelProf from "../../components/SidePanelProf";
 
