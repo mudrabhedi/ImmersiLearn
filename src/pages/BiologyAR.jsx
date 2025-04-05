@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 
 const BiologyAR = () => {
   const arItems = [
@@ -8,6 +8,8 @@ const BiologyAR = () => {
     { title: "Brain", modelPath: "/models/humanbrain.glb" },
   ];
 
+  const viewerRefs = useRef([]);
+
   useEffect(() => {
     const script = document.createElement("script");
     script.type = "module";
@@ -15,11 +17,13 @@ const BiologyAR = () => {
     document.head.appendChild(script);
   }, []);
 
-  const handleARView = (modelPath) => {
-    const a = document.createElement("a");
-    a.setAttribute("rel", "ar");
-    a.setAttribute("href", modelPath);
-    a.click();
+  const handleARView = (index) => {
+    const viewer = viewerRefs.current[index];
+    if (viewer && viewer.activateAR) {
+      viewer.activateAR();
+    } else {
+      alert("AR not supported or model-viewer not loaded yet.");
+    }
   };
 
   return (
@@ -33,17 +37,17 @@ const BiologyAR = () => {
           >
             <h2 className="text-2xl font-semibold mb-4">{item.title}</h2>
 
-            {/* Hidden model-viewer just to comply with Android */}
             <model-viewer
-              id={`modelViewer-${index}`}
+              ref={(el) => (viewerRefs.current[index] = el)}
               src={item.modelPath}
               ar
               ar-modes="scene-viewer webxr quick-look"
+              camera-controls
               style={{ display: "none" }}
             ></model-viewer>
 
             <button
-              onClick={() => handleARView(item.modelPath)}
+              onClick={() => handleARView(index)}
               className="mt-4 px-6 py-2 bg-[#EB5757] hover:bg-red-600 text-white font-semibold rounded-md transition"
             >
               View in AR
