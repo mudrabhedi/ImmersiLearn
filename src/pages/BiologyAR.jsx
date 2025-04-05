@@ -122,7 +122,7 @@ const BiologyAR = () => {
         {arItems.map((item, index) => (
           <div
             key={index}
-            className="backdrop-blur-md bg-white/20 border border-white/30 rounded-xl px-6 py-6 shadow-md text-center"
+            className="backdrop-blur-md bg-white/20 border border-white/30 rounded-xl px-6 py-6 shadow-md text-center relative"
           >
             <h2 className="text-2xl font-semibold mb-4 text-[#3B82F6]">{item.title}</h2>
             <video
@@ -140,7 +140,8 @@ const BiologyAR = () => {
                 position: "absolute",
                 top: 0,
                 left: 0,
-                pointerEvents: "none",
+                zIndex: 1, // Layer the canvas above the AR model
+                pointerEvents: "none", // Do not block clicks or interactions with the AR model
               }}
             ></canvas>
             <model-viewer
@@ -149,7 +150,13 @@ const BiologyAR = () => {
               ar
               ar-modes="scene-viewer webxr quick-look"
               camera-controls
-              style={{ display: "none" }}
+              style={{
+                position: "absolute", // Ensure it's positioned in the background
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+              }}
             ></model-viewer>
 
             <button
