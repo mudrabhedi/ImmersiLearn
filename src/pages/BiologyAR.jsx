@@ -36,7 +36,7 @@ const BiologyAR = () => {
             className="backdrop-blur-md bg-white/20 border border-white/30 rounded-xl px-6 py-6 shadow-md text-center"
           >
             <h2 className="text-2xl font-semibold mb-4 text-[#3B82F6]">{item.title}</h2>
-
+            <video id="video" width="640" height="480" style="display:none"></video>
             <model-viewer
               ref={(el) => (viewerRefs.current[index] = el)}
               src={item.modelPath}

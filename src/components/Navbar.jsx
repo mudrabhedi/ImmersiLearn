@@ -1,9 +1,15 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { FaUserCircle } from 'react-icons/fa'; // Import user icon from react-icons
 
 const Navbar = () => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
+  const location = useLocation(); // Hook to access the current path
+
+  // If the path is '/login' or '/signup', don't render the navbar
+  if (location.pathname === '/login' || location.pathname === '/signup') {
+    return null;
+  }
 
   // Mock user data (replace with actual user data or context)
   const userName = "John Doe";

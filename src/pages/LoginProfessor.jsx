@@ -1,4 +1,3 @@
-// LoginProfessor.jsx
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -6,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 const LoginProfessor = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: '', password: '' });
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -13,13 +13,39 @@ const LoginProfessor = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
+    
     try {
-      const res = await axios.post("https://immersilearn-backend.onrender.com/api/auth/login-professor", formData);
+      console.log('Attempting login with:', formData);
+      const res = await axios.post(
+        "http://localhost:5000/api/auth/login-professor", 
+        formData,
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+      
+      console.log('Login response:', res);
       alert(res.data.message);
-      localStorage.setItem('authToken', res.data.token);  // Store JWT in localStorage
-      navigate("/subjects"); // Redirect after successful login
+      localStorage.setItem('authToken', res.data.token);
+      navigate("/professor-dashboard");
     } catch (err) {
-      alert("Login failed: " + (err.response?.data?.message || err.message));
+      console.error('Login error:', {
+        message: err.message,
+        response: err.response,
+        request: err.request,
+        config: err.config
+      });
+      
+      alert("Login failed: " + (
+        err.response?.data?.message || 
+        err.message || 
+        'Unknown error occurred'
+      ));
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -38,6 +64,7 @@ const LoginProfessor = () => {
             placeholder="Email Address"
             value={formData.email}
             onChange={handleChange}
+            required
             className="w-full px-4 py-3 bg-white/30 text-gray-900 placeholder-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-inner"
           />
           <input
@@ -46,13 +73,17 @@ const LoginProfessor = () => {
             placeholder="Password"
             value={formData.password}
             onChange={handleChange}
+            required
             className="w-full px-4 py-3 bg-white/30 text-gray-900 placeholder-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-inner"
           />
           <button
             type="submit"
-            className="w-full bg-[#20C997] hover:bg-teal-600 text-white font-bold py-3 rounded-lg transition duration-200 shadow-lg"
+            disabled={isLoading}
+            className={`w-full bg-[#20C997] hover:bg-teal-600 text-white font-bold py-3 rounded-lg transition duration-200 shadow-lg ${
+              isLoading ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
           >
-            Log In
+            {isLoading ? 'Logging in...' : 'Log In'}
           </button>
         </form>
       </div>

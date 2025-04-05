@@ -1,4 +1,3 @@
-// SignupProfessor.jsx
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -6,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 const SignupProfessor = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ name: '', email: '', password: '' });
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -13,12 +13,41 @@ const SignupProfessor = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
+    
     try {
-      const res = await axios.post("https://immersilearn-backend.onrender.com/api/auth/signup-professor", formData);
+      console.log('Attempting signup with:', formData);
+      const res = await axios.post(
+        "http://localhost:5000/api/auth/signup-professor",
+        { ...formData, role: "professor" },
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+      
+      console.log('Signup response:', res);
       alert(res.data.message);
-      navigate("/subjects"); // Redirect after successful signup
+      if (res.data.token) {
+        localStorage.setItem('authToken', res.data.token);
+      }
+      navigate("/professor-dashboard");
     } catch (err) {
-      alert("Signup failed: " + (err.response?.data?.message || err.message));
+      console.error('Signup error:', {
+        message: err.message,
+        response: err.response,
+        request: err.request,
+        config: err.config
+      });
+      
+      alert("Signup failed: " + (
+        err.response?.data?.message || 
+        err.message || 
+        'Unknown error occurred'
+      ));
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -37,6 +66,7 @@ const SignupProfessor = () => {
             placeholder="Full Name"
             value={formData.name}
             onChange={handleChange}
+            required
             className="w-full px-4 py-3 bg-white/30 text-gray-900 placeholder-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-inner"
           />
           <input
@@ -45,6 +75,7 @@ const SignupProfessor = () => {
             placeholder="Email Address"
             value={formData.email}
             onChange={handleChange}
+            required
             className="w-full px-4 py-3 bg-white/30 text-gray-900 placeholder-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-inner"
           />
           <input
@@ -53,13 +84,17 @@ const SignupProfessor = () => {
             placeholder="Create Password"
             value={formData.password}
             onChange={handleChange}
+            required
             className="w-full px-4 py-3 bg-white/30 text-gray-900 placeholder-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-inner"
           />
           <button
             type="submit"
-            className="w-full bg-[#20C997] hover:bg-teal-600 text-white font-bold py-3 rounded-lg transition duration-200 shadow-lg"
+            disabled={isLoading}
+            className={`w-full bg-[#20C997] hover:bg-teal-600 text-white font-bold py-3 rounded-lg transition duration-200 shadow-lg ${
+              isLoading ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
           >
-            Sign Up
+            {isLoading ? 'Creating account...' : 'Sign Up'}
           </button>
         </form>
       </div>
