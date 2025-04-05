@@ -14,10 +14,54 @@ const LleaderBoard = () => {
   ]);
   const [searchTerm, setSearchTerm] = useState('');
 
-  useEffect(() => {
-    // Fetch data from your backend to populate the leaderboard
-    // Example: fetch('/api/leaderboard').then(res => res.json()).then(data => setStudents(data));
-  }, []);
+ useEffect(() => {
+  const fetchLeaderboardData = async () => {
+    try {
+      const token = localStorage.getItem('authToken');
+      const response = await fetch('https://immersilearn-backend.onrender.com/api/leaderboard', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch leaderboard data');
+      }
+
+      const data = await response.json();
+      
+      // Transform the API data to match your component's expected structure
+      const formattedData = data.map((entry, index) => ({
+        id: entry._id,
+        name: entry.username,
+        score: entry.score,
+        level: getLevelFromScore(entry.score),
+        progress: calculateProgress(entry.score),
+        avatar: `/avatars/${(index % 7) + 1}.jpg` // Cycle through available avatars
+      }));
+
+      setStudents(formattedData);
+    } catch (error) {
+      console.error('Error fetching leaderboard:', error);
+      // You might want to set some error state here to show to the user
+    }
+  };
+
+  // Helper function to determine level based on score
+  const getLevelFromScore = (score) => {
+    if (score >= 90) return 'Advanced';
+    if (score >= 70) return 'Intermediate';
+    return 'Beginner';
+  };
+
+  // Helper function to calculate progress (assuming max score is 100)
+  const calculateProgress = (score) => {
+    return Math.min(100, Math.floor(score)); // Ensure progress doesn't exceed 100%
+  };
+
+  fetchLeaderboardData();
+}, []);
 
   const filteredStudents = students.filter(student =>
     student.name.toLowerCase().includes(searchTerm.toLowerCase())
