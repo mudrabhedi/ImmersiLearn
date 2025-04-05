@@ -15,7 +15,7 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/signup", formData);
+      const res = await axios.post("https://immersilearn-backend.onrender.com/api/auth/signup", formData);
       alert(res.data.message);
       navigate("/subjects"); // ← 3. Redirect after success
     } catch (err) {
