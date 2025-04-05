@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 import { useNavigate } from "react-router-dom";
 
@@ -61,13 +62,14 @@ const Signup = () => {
         </form>
         <p className="text-center text-white">
   Already have an account?{" "}
-  <a
-    href="/login"
+  <Link
+    to="/login"
     className="text-[#EB5757] underline hover:text-red-300 transition duration-150"
   >
     Log in
-  </a>
+  </Link>
 </p>
+
       </div>
       
     </div>
