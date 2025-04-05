@@ -10,36 +10,37 @@ const Quizzess = () => {
   const [newQuiz, setNewQuiz] = useState({ title: "", description: "", duration: 30, totalQuestions: 10 });
   const [searchTerm, setSearchTerm] = useState("");
 
-  useEffect(() => {
-    axios.get("/api/professor/quizzes")
-      .then((response) => {
-        if (Array.isArray(response.data)) {
-          setQuizzes(response.data);
-        } else {
-          console.error("Received data is not an array:", response.data);
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching quizzes: ", error);
-      });
+ useEffect(() => {
+    const fetchQuizzes = async () => {
+      try {
+        const token = localStorage.getItem('authToken');
+        const response = await axios.get('https://immersilearn-backend.onrender.com/api/professor/quizzes', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setQuizzes(response.data);
+      } catch (error) {
+        console.error("Error fetching quizzes:", error);
+      }
+    };
+    fetchQuizzes();
   }, []);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setNewQuiz((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    axios.post("/api/professor/quizzes", newQuiz)
-      .then((response) => {
-        setQuizzes((prev) => [...prev, response.data]);
-        setModalOpen(false);
-        setNewQuiz({ title: "", description: "", duration: 30, totalQuestions: 10 });
-      })
-      .catch((error) => console.error("Error creating quiz: ", error));
+    try {
+      const token = localStorage.getItem('authToken');
+      const response = await axios.post(
+        'https://immersilearn-backend.onrender.com/api/professor/quizzes',
+        newQuiz,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setQuizzes([...quizzes, response.data]);
+      setModalOpen(false);
+      setNewQuiz({ title: "", description: "", duration: 30, totalQuestions: 10 });
+    } catch (error) {
+      console.error("Error creating quiz:", error);
+    }
   };
-
   const filteredQuizzes = quizzes.filter(quiz =>
     quiz.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     quiz.description.toLowerCase().includes(searchTerm.toLowerCase())
