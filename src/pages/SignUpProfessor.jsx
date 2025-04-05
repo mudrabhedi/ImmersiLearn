@@ -23,52 +23,29 @@ const SignupProfessor = () => {
     setError('');
 
     try {
-      // Try both possible endpoints
-      const endpoints = [
-        'https://immersilearn-backend.onrender.com/api/auth/signup', // Standard signup with role
-        'https://immersilearn-backend.onrender.com/api/professors/register' // Alternative endpoint
-      ];
-
-      let lastError = null;
-
-      for (const endpoint of endpoints) {
-        try {
-          const res = await axios.post(
-            endpoint,
-            {
-              ...formData,
-              role: 'professor' // Send role with the request
-            },
-            {
-              headers: {
-                'Content-Type': 'application/json'
-              }
-            }
-          );
-
-          localStorage.setItem('authToken', res.data.token);
-          localStorage.setItem('userRole', 'professor');
-          navigate("/professor/dashboard");
-          return; // Exit if successful
-        } catch (err) {
-          lastError = err;
-          console.warn(`Attempt failed for ${endpoint}:`, err.response?.status);
+      // Try the professor-specific endpoint first
+      const response = await axios.post(
+        'https://immersilearn-backend.onrender.com/api/professors/register',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
         }
-      }
+      );
 
-      throw lastError || new Error('All signup attempts failed');
-
+      // Save token and redirect
+      localStorage.setItem('authToken', response.data.token);
+      localStorage.setItem('userRole', 'professor');
+      localStorage.setItem('userInfo', JSON.stringify(response.data.user));
+      
+      navigate("/professor/dashboard");
     } catch (err) {
-      console.error("Signup error details:", {
-        message: err.message,
-        response: err.response?.data,
-        status: err.response?.status
-      });
-
-      const errorMessage = err.response?.data?.message || 
-                         err.response?.data?.error || 
-                         'Professor registration failed. Please contact support.';
-      setError(errorMessage);
+      console.error("Registration error:", err.response?.data || err.message);
+      setError(
+        err.response?.data?.error || 
+        'Professor registration failed. Please try again.'
+      );
     } finally {
       setIsLoading(false);
     }
@@ -113,6 +90,15 @@ const SignupProfessor = () => {
             onChange={handleChange}
             required
             minLength="8"
+            className="w-full px-4 py-3 bg-white/30 text-gray-900 placeholder-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-inner"
+          />
+          <input
+            type="text"
+            name="institution"
+            placeholder="Institution/University"
+            value={formData.institution}
+            onChange={handleChange}
+            required
             className="w-full px-4 py-3 bg-white/30 text-gray-900 placeholder-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-inner"
           />
           <button
