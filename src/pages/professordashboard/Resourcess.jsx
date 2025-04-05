@@ -3,6 +3,20 @@ import { FiUpload, FiBook, FiFileText, FiCheckCircle, FiX } from 'react-icons/fi
 import SidePanelProf from '../../components/SidePanelProf';
 
 const Resourcess = () => {
+  useEffect(() => {
+    const fetchResources = async () => {
+      try {
+        const token = localStorage.getItem('authToken');
+        const response = await axios.get('https://immersilearn-backend.onrender.com/api/professor/resources', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setResources(response.data);
+      } catch (error) {
+        console.error('Error fetching resources:', error);
+      }
+    };
+    fetchResources();
+  }, []);
   const [bookDetails, setBookDetails] = useState({
     title: '',
     author: '',
@@ -32,14 +46,20 @@ const Resourcess = () => {
     setRequestArVr(!requestArVr);
   };
 
+  
+
   const handleAddBook = async () => {
-    setIsSubmitting(true);
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    setSuccessMessage(`"${bookDetails.title}" added successfully!`);
-    setBookDetails({ title: '', author: '', isbn: '' });
-    setRequestArVr(false);
-    setIsSubmitting(false);
-    setTimeout(() => setSuccessMessage(''), 5000);
+    try {
+      const token = localStorage.getItem('authToken');
+      await axios.post(
+        'https://immersilearn-backend.onrender.com/api/professor/resources',
+        { ...bookDetails, type: 'book' },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      // Handle success
+    } catch (error) {
+      console.error('Error adding book:', error);
+    }
   };
 
   const handleUploadMaterial = async () => {
