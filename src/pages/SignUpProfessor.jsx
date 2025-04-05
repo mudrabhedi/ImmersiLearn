@@ -13,43 +13,15 @@ const SignupProfessor = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
-    
     try {
-      console.log('Attempting signup with:', formData);
-      const res = await axios.post(
-        "https://immersilearn-backend.onrender.com/api/auth/signup-professor",
-        { ...formData, role: "professor" },
-        {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }
-      );
-      
-      console.log('Signup response:', res);
+      const res = await axios.post("https://immersilearn-backend.onrender.com/api/auth/signup", formData);
       alert(res.data.message);
-      if (res.data.token) {
-        localStorage.setItem('authToken', res.data.token);
-      }
-      navigate("/professor-dashboard");
+      navigate("/professor-dasboard");
     } catch (err) {
-      console.error('Signup error:', {
-        message: err.message,
-        response: err.response,
-        request: err.request,
-        config: err.config
-      });
-      
-      alert("Signup failed: " + (
-        err.response?.data?.message || 
-        err.message || 
-        'Unknown error occurred'
-      ));
-    } finally {
-      setIsLoading(false);
+      alert("Signup failed: " + (err.response?.data?.message || err.message));
     }
   };
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#F0F9FF] to-[#E0F2FE] font-sans">
