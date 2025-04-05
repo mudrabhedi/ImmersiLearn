@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
+import { FiUpload, FiBook, FiFileText, FiCheckCircle, FiX } from 'react-icons/fi';
 import SidePanelProf from '../../components/SidePanelProf';
-import { FiUpload, FiBook, FiFileText, FiCheckCircle } from 'react-icons/fi';
 
 const Resourcess = () => {
   const [bookDetails, setBookDetails] = useState({
@@ -21,7 +21,7 @@ const Resourcess = () => {
 
   const handleFileUpload = (e) => {
     const selectedFile = e.target.files[0];
-    if (selectedFile && selectedFile.size > 10 * 1024 * 1024) { // 10MB limit
+    if (selectedFile && selectedFile.size > 10 * 1024 * 1024) {
       alert('File size exceeds 10MB limit');
       return;
     }
@@ -34,7 +34,6 @@ const Resourcess = () => {
 
   const handleAddBook = async () => {
     setIsSubmitting(true);
-    // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1500));
     setSuccessMessage(`"${bookDetails.title}" added successfully!`);
     setBookDetails({ title: '', author: '', isbn: '' });
@@ -49,7 +48,6 @@ const Resourcess = () => {
       return;
     }
     setIsSubmitting(true);
-    // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1500));
     setSuccessMessage(`"${file.name}" uploaded successfully!`);
     setFile(null);
@@ -58,97 +56,99 @@ const Resourcess = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 md:p-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row gap-6">
-          {/* Side Panel */}
-          <div className="flex min-h-screen bg-gray-50">
-            <SidePanelProf />
+    <div className="flex min-h-screen bg-gray-50">
+      {/* Full-height Side Panel */}
+      <div className="flex-shrink-0 h-screen sticky top-0">
+        <SidePanelProf />
+      </div>
+      
+      {/* Main Content */}
+      <div className="flex-1 overflow-y-auto p-8">
+        <div className="max-w-4xl mx-auto">
+          {/* Header */}
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-gray-800">Resources</h1>
+            
+            <p className="text-gray-500">Add course materials and manage educational resources</p>
           </div>
-          {/* Main Content */}
-          <div className="flex-1">
-            <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
-              <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
-                Professor Resources
-              </h1>
-              <p className="text-gray-600 mb-6">
-                Add course materials and manage educational resources
-              </p>
 
-              {/* Tab Navigation */}
-              <div className="flex border-b border-gray-200 mb-6">
+          {/* Content Card */}
+          <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+            {/* Tab Navigation */}
+            <div className="border-b border-gray-200">
+              <div className="flex">
                 <button
-                  className={`flex items-center py-3 px-4 font-medium text-sm ${activeTab === 'books' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+                  className={`flex items-center py-4 px-6 font-medium text-sm ${activeTab === 'books' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
                   onClick={() => setActiveTab('books')}
                 >
                   <FiBook className="mr-2" />
                   Add Books
                 </button>
                 <button
-                  className={`flex items-center py-3 px-4 font-medium text-sm ${activeTab === 'materials' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+                  className={`flex items-center py-4 px-6 font-medium text-sm ${activeTab === 'materials' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
                   onClick={() => setActiveTab('materials')}
                 >
                   <FiFileText className="mr-2" />
                   Upload Materials
                 </button>
               </div>
+            </div>
 
-              {/* Success Message */}
-              {successMessage && (
-                <div className="mb-6 p-4 bg-green-50 text-green-700 rounded-lg flex items-center">
-                  <FiCheckCircle className="mr-2 text-green-500" />
-                  {successMessage}
-                </div>
-              )}
+            {/* Success Message */}
+            {successMessage && (
+              <div className="mx-6 mt-6 p-4 bg-green-50 text-green-700 rounded-lg flex items-center">
+                <FiCheckCircle className="mr-2 text-green-500" />
+                {successMessage}
+              </div>
+            )}
 
+            {/* Content Area */}
+            <div className="p-6">
               {/* Add Book Form */}
               {activeTab === 'books' && (
                 <div className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
                         Book Title <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="text"
-                        id="title"
                         name="title"
                         value={bookDetails.title}
                         onChange={handleBookDetailsChange}
                         placeholder="Enter book title"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         required
                       />
                     </div>
                     <div>
-                      <label htmlFor="author" className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
                         Author <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="text"
-                        id="author"
                         name="author"
                         value={bookDetails.author}
                         onChange={handleBookDetailsChange}
                         placeholder="Enter author name"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         required
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label htmlFor="isbn" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
                       ISBN
                     </label>
                     <input
                       type="text"
-                      id="isbn"
                       name="isbn"
                       value={bookDetails.isbn}
                       onChange={handleBookDetailsChange}
                       placeholder="Enter ISBN number"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                   </div>
 
@@ -168,11 +168,11 @@ const Resourcess = () => {
                   <button
                     onClick={handleAddBook}
                     disabled={!bookDetails.title || !bookDetails.author || isSubmitting}
-                    className={`w-full mt-2 px-6 py-3 rounded-lg font-medium flex items-center justify-center ${
+                    className={`w-full mt-4 px-6 py-3 rounded-lg font-medium flex items-center justify-center ${
                       !bookDetails.title || !bookDetails.author || isSubmitting
                         ? 'bg-gray-300 cursor-not-allowed'
                         : 'bg-blue-600 hover:bg-blue-700'
-                    } text-white transition duration-300 shadow-sm`}
+                    } text-white transition-colors`}
                   >
                     {isSubmitting ? (
                       <>
@@ -189,7 +189,7 @@ const Resourcess = () => {
                 </div>
               )}
 
-              {/* Upload Study Material Form */}
+              {/* Upload Materials Form */}
               {activeTab === 'materials' && (
                 <div className="space-y-6">
                   <div>
@@ -228,7 +228,7 @@ const Resourcess = () => {
                           onClick={() => setFile(null)}
                           className="text-gray-400 hover:text-gray-600"
                         >
-                          ×
+                          <FiX />
                         </button>
                       </div>
                     )}
@@ -253,11 +253,11 @@ const Resourcess = () => {
                   <button
                     onClick={handleUploadMaterial}
                     disabled={!file || isSubmitting}
-                    className={`w-full mt-2 px-6 py-3 rounded-lg font-medium flex items-center justify-center ${
+                    className={`w-full mt-4 px-6 py-3 rounded-lg font-medium flex items-center justify-center ${
                       !file || isSubmitting
                         ? 'bg-gray-300 cursor-not-allowed'
                         : 'bg-blue-600 hover:bg-blue-700'
-                    } text-white transition duration-300 shadow-sm`}
+                    } text-white transition-colors`}
                   >
                     {isSubmitting ? (
                       <>
@@ -275,8 +275,6 @@ const Resourcess = () => {
               )}
             </div>
           </div>
-
-          
         </div>
       </div>
     </div>

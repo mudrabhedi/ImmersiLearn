@@ -9,7 +9,8 @@ const SidePanelProf = ({ activeTab, setActiveTab, sidebarOpen, setSidebarOpen })
     { id: "leaderboard", icon: <FiAward size={18} />, label: "Class Leaderboard", path: "/professor/dashboard/leaderboard" },
     { id: "recognition", icon: <FiAward size={18} />, label: "Student Recognition", path: "/professor/dashboard/recognition" },
     { id: "announcements", icon: <FiMessageSquare size={18} />, label: "Messaging/Announcement", path: "/professor/dashboard/announcements" },
-    { id: "resources", icon: <FiFileText size={18} />, label: "Resource Library", path: "/professor/dashboard/resources" }
+    { id: "resources", icon: <FiFileText size={18} />, label: "Resource Library", path: "/professor/dashboard/resources" },
+    { id: "professorprofile", icon: <FiFileText size={18} />, label: "Profile", path: "/professor/dashboard/professorprofile" }
   ];
 
   return (

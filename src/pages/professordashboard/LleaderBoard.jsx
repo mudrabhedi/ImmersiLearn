@@ -42,7 +42,9 @@ const LleaderBoard = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-      <SidePanelProf />
+      <div className="flex-shrink-0 h-screen sticky top-0">
+        <SidePanelProf />
+      </div>
       
       <div className="flex-1 p-6">
         <div className="mb-8">

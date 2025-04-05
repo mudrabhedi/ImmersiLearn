@@ -47,7 +47,9 @@ const Quizzess = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-      <SidePanelProf />
+      <div className="flex-shrink-0 h-screen sticky top-0">
+        <SidePanelProf />
+      </div>
       
       <div className="flex-1 p-6 md:p-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">

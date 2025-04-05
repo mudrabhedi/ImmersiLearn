@@ -6,7 +6,6 @@ import BiologyAR from "./pages/BiologyAR"; // Create this page
 import ChemistryAR from "./pages/ChemistryAR";
 import Leaderboards from './pages/Leaderboards';
 import Quizzes from './pages/Quizzes';
-import LevelsRewards from './pages/LevelsRewards';
 import Profile from './pages/Profile';
 import Navbar from "./components/Navbar";
 import AiTutor from "./pages/AiTutor";
@@ -19,34 +18,42 @@ import Recognitionn from "./pages/professordashboard/Recognitionn";
 import Resourcess from "./pages/professordashboard/Resourcess";
 import SstudentProgress from "./pages/professordashboard/SstudentProgress";
 import ProfessorDashboard from "./components/ProfessorDashboard";
+import HomePage from "./components/HomePage";
+import ProfessorProfile from "./pages/professordashboard/ProfessorProfile";
 
-
-
+function Layout({ children, showNavbar = true }) {
+  return (
+    <div className="min-h-screen">
+      {showNavbar && <Navbar />}
+      <main>{children}</main>
+    </div>
+  );
+}
 
 function App() {
   return (
     <Router>
-      <Navbar/>
       <Routes>
-        <Route path="/" element={<SignUp />} />
-        <Route path="/signup-professor" element={<SignupProfessor />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/login-professor" element={<LoginProfessor />} />
-        <Route path="/subjects" element={<Subjects />} />
-        <Route path="/subjects/biology" element={<BiologyAR />} />
-        <Route path="/subjects/chemistry" element={<ChemistryAR />} />
-        <Route path="/leaderboards" element={<Leaderboards />} />
-        <Route path="/quizzes" element={<Quizzes />} />
-        <Route path="/levels-rewards" element={<LevelsRewards />} />
-        <Route path="/ai-tutor" element={<AiTutor />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/professor/dashboard" element={<ProfessorDashboard />} />
-        <Route path="/professor/dashboard/progress" element={<SstudentProgress />} />
-        <Route path="/professor/dashboard/quizzes" element={<Quizzess />} />
-        <Route path="/professor/dashboard/leaderboard" element={<LleaderBoard />} />
-        <Route path="/professor/dashboard/announcements" element={<Announcementss />} />
-        <Route path="/professor/dashboard/recognition" element={<Recognitionn />} />
-        <Route path="/professor/dashboard/resources" element={<Resourcess />} />
+        <Route path="/" element={<Layout showNavbar={false}><HomePage /></Layout>} />
+        <Route path="/login" element={<Layout showNavbar={false}><Login /></Layout>} />
+        <Route path="/signup" element={<Layout showNavbar={false}><SignUp /></Layout>} />
+        <Route path="/signup-professor" element={<Layout showNavbar={false}><SignupProfessor /></Layout>} />
+        <Route path="/login-professor" element={<Layout showNavbar={false}><LoginProfessor /></Layout>} />
+        <Route path="/subjects" element={<Layout showNavbar={true}><Subjects /></Layout>} />
+<Route path="/subjects/biology" element={<Layout showNavbar={true}><BiologyAR /></Layout>} />
+<Route path="/subjects/chemistry" element={<Layout showNavbar={true}><ChemistryAR /></Layout>} />
+<Route path="/leaderboards" element={<Layout showNavbar={true}><Leaderboards /></Layout>} />
+<Route path="/quizzes" element={<Layout showNavbar={true}><Quizzes /></Layout>} />
+<Route path="/ai-tutor" element={<Layout showNavbar={true}><AiTutor /></Layout>} />
+<Route path="/profile" element={<Layout showNavbar={true}><Profile /></Layout>} />
+<Route path="/professor/dashboard" element={<Layout showNavbar={false}><ProfessorDashboard /></Layout>} />
+<Route path="/professor/dashboard/progress" element={<Layout showNavbar={false}><SstudentProgress /></Layout>} />
+<Route path="/professor/dashboard/quizzes" element={<Layout showNavbar={false}><Quizzess /></Layout>} />
+<Route path="/professor/dashboard/leaderboard" element={<Layout showNavbar={false}><LleaderBoard /></Layout>} />
+<Route path="/professor/dashboard/announcements" element={<Layout showNavbar={false}><Announcementss /></Layout>} />
+<Route path="/professor/dashboard/recognition" element={<Layout showNavbar={false}><Recognitionn /></Layout>} />
+<Route path="/professor/dashboard/resources" element={<Layout showNavbar={false}><Resourcess /></Layout>} />
+<Route path="/professor/dashboard/professorprofile" element={<Layout showNavbar={false}><ProfessorProfile /></Layout>} />
       </Routes>
     </Router>
   );
