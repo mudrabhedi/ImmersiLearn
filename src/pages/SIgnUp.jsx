@@ -1,8 +1,7 @@
+// signup.jsx
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
-
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from 'react-router-dom';
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -66,10 +65,7 @@ const Signup = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#F0F9FF] to-[#E0F2FE] font-sans">
       <div className="backdrop-blur-lg bg-white/20 border border-white/30 shadow-2xl rounded-2xl px-10 py-12 w-full max-w-md transition duration-200">
-
-        <h1 className="text-4xl font-extrabold text-center text-[#3B82F6] mb-2 tracking-wide">
-          ImmerseLearn
-        </h1>
+        <h1 className="text-4xl font-extrabold text-center text-[#3B82F6] mb-2 tracking-wide">ImmerseLearn</h1>
         <p className="text-center text-gray-600 mb-8 text-sm">Explore the world through AR learning</p>
 
         <h2 className="text-2xl font-bold text-gray-900 text-center mb-6">Create Your Account</h2>
@@ -107,12 +103,16 @@ const Signup = () => {
           </button>
         </form>
 
-
         {/* Divider */}
         <div className="my-6 text-center text-gray-500 font-medium">— or continue with —</div>
 
         {/* Google Signup Button */}
         <div id="google-signin"></div>  {/* Google Sign-In button rendered here */}
+
+        {/* Option for professors */}
+        <div className="my-6 text-center text-gray-500 font-medium">
+          <p>Are you a professor? <Link to="/signup-professor" className="text-[#EF4444] underline hover:text-red-500 transition duration-150 font-semibold">Sign up here</Link></p>
+        </div>
 
         <p className="text-center text-gray-800 mt-6">
           Already have an account?{" "}

@@ -1,11 +1,11 @@
-// Login.jsx
+// SignupProfessor.jsx
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
-const Login = () => {
+const SignupProfessor = () => {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({ email: '', password: '' });
+  const [formData, setFormData] = useState({ name: '', email: '', password: '' });
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -14,12 +14,11 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("https://immersilearn-backend.onrender.com/api/auth/login", formData);
+      const res = await axios.post("https://immersilearn-backend.onrender.com/api/auth/signup-professor", formData);
       alert(res.data.message);
-      localStorage.setItem('authToken', res.data.token);  // Store JWT in localStorage
-      navigate("/subjects");
+      navigate("/subjects"); // Redirect after successful signup
     } catch (err) {
-      alert("Login failed: " + (err.response?.data?.message || err.message));
+      alert("Signup failed: " + (err.response?.data?.message || err.message));
     }
   };
 
@@ -29,9 +28,17 @@ const Login = () => {
         <h1 className="text-4xl font-extrabold text-center text-[#3B82F6] mb-2 tracking-wide">ImmerseLearn</h1>
         <p className="text-center text-gray-600 mb-8 text-sm">Explore the world through AR learning</p>
 
-        <h2 className="text-2xl font-bold text-gray-900 text-center mb-6">Log In</h2>
+        <h2 className="text-2xl font-bold text-gray-900 text-center mb-6">Professor Sign Up</h2>
 
         <form onSubmit={handleSubmit} className="space-y-5">
+          <input
+            type="text"
+            name="name"
+            placeholder="Full Name"
+            value={formData.name}
+            onChange={handleChange}
+            className="w-full px-4 py-3 bg-white/30 text-gray-900 placeholder-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-inner"
+          />
           <input
             type="email"
             name="email"
@@ -43,7 +50,7 @@ const Login = () => {
           <input
             type="password"
             name="password"
-            placeholder="Password"
+            placeholder="Create Password"
             value={formData.password}
             onChange={handleChange}
             className="w-full px-4 py-3 bg-white/30 text-gray-900 placeholder-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-inner"
@@ -52,33 +59,12 @@ const Login = () => {
             type="submit"
             className="w-full bg-[#20C997] hover:bg-teal-600 text-white font-bold py-3 rounded-lg transition duration-200 shadow-lg"
           >
-            Log In
+            Sign Up
           </button>
         </form>
-
-        {/* Divider */}
-        <div className="my-6 text-center text-gray-500 font-medium">— or continue with —</div>
-
-        {/* Google Login Button */}
-        <div id="google-signin"></div>  {/* Google Sign-In button rendered here */}
-
-        {/* Option for professors */}
-        <div className="my-6 text-center text-gray-500 font-medium">
-          <p>Are you a professor? <Link to="/login-professor" className="text-[#EF4444] underline hover:text-red-500 transition duration-150 font-semibold">Log in here</Link></p>
-        </div>
-
-        <p className="text-center text-gray-800 mt-6">
-          Don't have an account?{" "}
-          <Link
-            to="/signup"
-            className="text-[#EF4444] underline hover:text-red-500 transition duration-150 font-semibold"
-          >
-            Sign up
-          </Link>
-        </p>
       </div>
     </div>
   );
 };
 
-export default Login;
+export default SignupProfessor;

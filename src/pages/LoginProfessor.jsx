@@ -1,9 +1,9 @@
-// Login.jsx
+// LoginProfessor.jsx
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
-const Login = () => {
+const LoginProfessor = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: '', password: '' });
 
@@ -14,10 +14,10 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("https://immersilearn-backend.onrender.com/api/auth/login", formData);
+      const res = await axios.post("https://immersilearn-backend.onrender.com/api/auth/login-professor", formData);
       alert(res.data.message);
       localStorage.setItem('authToken', res.data.token);  // Store JWT in localStorage
-      navigate("/subjects");
+      navigate("/subjects"); // Redirect after successful login
     } catch (err) {
       alert("Login failed: " + (err.response?.data?.message || err.message));
     }
@@ -29,7 +29,7 @@ const Login = () => {
         <h1 className="text-4xl font-extrabold text-center text-[#3B82F6] mb-2 tracking-wide">ImmerseLearn</h1>
         <p className="text-center text-gray-600 mb-8 text-sm">Explore the world through AR learning</p>
 
-        <h2 className="text-2xl font-bold text-gray-900 text-center mb-6">Log In</h2>
+        <h2 className="text-2xl font-bold text-gray-900 text-center mb-6">Professor Log In</h2>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <input
@@ -55,30 +55,9 @@ const Login = () => {
             Log In
           </button>
         </form>
-
-        {/* Divider */}
-        <div className="my-6 text-center text-gray-500 font-medium">— or continue with —</div>
-
-        {/* Google Login Button */}
-        <div id="google-signin"></div>  {/* Google Sign-In button rendered here */}
-
-        {/* Option for professors */}
-        <div className="my-6 text-center text-gray-500 font-medium">
-          <p>Are you a professor? <Link to="/login-professor" className="text-[#EF4444] underline hover:text-red-500 transition duration-150 font-semibold">Log in here</Link></p>
-        </div>
-
-        <p className="text-center text-gray-800 mt-6">
-          Don't have an account?{" "}
-          <Link
-            to="/signup"
-            className="text-[#EF4444] underline hover:text-red-500 transition duration-150 font-semibold"
-          >
-            Sign up
-          </Link>
-        </p>
       </div>
     </div>
   );
 };
 
-export default Login;
+export default LoginProfessor;

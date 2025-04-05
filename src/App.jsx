@@ -10,6 +10,8 @@ import LevelsRewards from './pages/LevelsRewards';
 import Profile from './pages/Profile';
 import Navbar from "./components/Navbar";
 import AiTutor from "./pages/Aitutor";
+import SignupProfessor from "./pages/SignUpProfessor";
+import LoginProfessor from "./pages/LoginProfessor";
 
 
 function App() {
@@ -18,7 +20,9 @@ function App() {
       <Navbar/>
       <Routes>
         <Route path="/" element={<SignUp />} />
+        <Route path="/signup-professor" element={<SignupProfessor />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/login-professor" element={<LoginProfessor />} />
         <Route path="/subjects" element={<Subjects />} />
         <Route path="/subjects/biology" element={<BiologyAR />} />
         <Route path="/subjects/chemistry" element={<ChemistryAR />} />
