@@ -14,13 +14,12 @@ const Leaderboard = () => {
     const fetchLeaderboard = async () => {
       try {
         const response = await fetch('https://immersilearn-backend.onrender.com/api/leaderboard');
-        if (!response.ok) {
-         
-        }
+        if (!response.ok) throw new Error('Failed to fetch leaderboard');
         const data = await response.json();
         setLeaderboard(data);
       } catch (error) {
-        
+        console.error('Error fetching leaderboard:', error);
+        setError('Failed to load leaderboard. Please refresh.');
       }
     };
 
@@ -44,22 +43,21 @@ const Leaderboard = () => {
         body: JSON.stringify({ username, score: parseInt(score) }),
       });
 
-      if (response.ok) {
-        const newEntry = await response.json();
-        setLeaderboard(prev => [...prev, newEntry].sort((a, b) => b.score - a.score).slice(0, 10));
-        setUsername('');
-        setScore('');
-      } else {
-        throw new Error('Failed to submit score');
-      }
+      if (!response.ok) throw new Error('Submission failed');
+      
+      const newEntry = await response.json();
+      setLeaderboard(prev => [...prev, newEntry].sort((a, b) => b.score - a.score));
+      setUsername('');
+      setScore('');
     } catch (error) {
-      console.error('Error submitting score:', error);
-      setError('Failed to submit score. Please try again.');
+      console.error('Submission error:', error);
+      setError(error.message || 'Failed to submit score');
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  // Rank icons
   const getRankIcon = (rank) => {
     switch(rank) {
       case 0: return <FaCrown className="text-yellow-400 mr-2" />;
@@ -69,24 +67,21 @@ const Leaderboard = () => {
     }
   };
 
+  // Filter leaderboard
   const filteredLeaderboard = leaderboard.filter(entry =>
     entry.username.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
     <div className="max-w-4xl mx-auto p-6">
-    
       <h1 className="text-3xl font-bold text-gray-800 mb-2">Leaderboard</h1>
-      <p className="text-gray-600 mb-6">Compete with others and climb to the top!</p>
-
+      
       {/* Search Bar */}
       <div className="relative mb-8">
-        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <FaSearch className="text-gray-400" />
-        </div>
+        <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
         <input
           type="text"
-          className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
           placeholder="Search players..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
@@ -94,72 +89,63 @@ const Leaderboard = () => {
       </div>
 
       {/* Score Submission */}
-      <div className="bg-white p-6 rounded-lg shadow-md mb-8 border border-gray-200">
-        <h3 className="text-xl font-semibold text-gray-800 mb-4">Submit Your Score</h3>
+      <div className="bg-white p-6 rounded-lg shadow-md mb-8">
+        <h3 className="text-xl font-semibold mb-4">Submit Your Score</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Username</label>
             <input
               type="text"
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Enter your username"
+              className="w-full p-3 border rounded-lg"
+              placeholder="Username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Score</label>
             <input
               type="number"
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Enter your score"
+              className="w-full p-3 border rounded-lg"
+              placeholder="Score"
               value={score}
               onChange={(e) => setScore(e.target.value)}
-              min="0"
             />
           </div>
         </div>
-        {error && <div className="text-red-500 text-sm mb-4">{error}</div>}
+        {error && <div className="text-red-500 mb-4">{error}</div>}
         <button
           onClick={submitScore}
           disabled={isSubmitting}
-          className={`w-full py-3 px-4 rounded-lg font-medium text-white transition-colors ${
-            isSubmitting ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
+          className={`w-full py-3 px-4 rounded-lg font-medium text-white ${
+            isSubmitting ? 'bg-blue-400' : 'bg-blue-600 hover:bg-blue-700'
           }`}
         >
           {isSubmitting ? 'Submitting...' : 'Submit Score'}
         </button>
       </div>
 
-      {/* Leaderboard Content */}
+      {/* Leaderboard Display */}
       <div>
-        <h3 className="text-xl font-semibold text-gray-800 mb-4">Top Players</h3>
-        
+        <h3 className="text-xl font-semibold mb-4">Top Players</h3>
         {filteredLeaderboard.length === 0 ? (
-          <div className="bg-white p-8 rounded-lg shadow-md border border-gray-200 text-center">
+          <div className="bg-white p-8 rounded-lg shadow-md text-center">
             <FaRocket className="mx-auto text-gray-400 text-4xl mb-4" />
-            <p className="text-gray-600">No scores yet. Be the first to submit!</p>
+            <p className="text-gray-600">No scores yet. Be the first!</p>
           </div>
         ) : (
           <div className="space-y-4">
             {filteredLeaderboard.map((entry, index) => (
-              <div 
-                key={entry._id || index} 
-                className="bg-white p-4 rounded-lg shadow-md border border-gray-200 hover:shadow-lg transition-shadow"
-              >
+              <div key={entry._id} className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
                     {getRankIcon(index)}
-                    <div className="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center mr-3">
-                      <span className="text-blue-600 font-medium">
-                        {entry.username.charAt(0).toUpperCase()}
-                      </span>
+                    <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                      {entry.username.charAt(0).toUpperCase()}
                     </div>
                     <div>
-                      <h4 className="font-medium text-gray-800">{entry.username}</h4>
+                      <h4 className="font-medium">{entry.username}</h4>
                       <div className="flex items-center text-sm text-gray-500">
                         <FaCalendarAlt className="mr-1" />
-                        {entry.date ? new Date(entry.date).toLocaleDateString() : 'N/A'}
+                        {new Date(entry.date).toLocaleDateString()}
                       </div>
                     </div>
                   </div>
