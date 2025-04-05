@@ -1,50 +1,31 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { FiUpload, FiBook, FiFileText, FiCheckCircle, FiX } from 'react-icons/fi';
-import SidePanelProf from '../../components/SidePanelProf';
+import React, { useState } from "react";
+import { FaPaperPlane, FaCalendarAlt, FaTrash } from "react-icons/fa";
+import SidePanelProf from "../../components/SidePanelProf";
 
-const Resourcess = () => {
-  const [resources, setResources] = useState([]);
-  const [activeTab, setActiveTab] = useState('books');
-
-  useEffect(() => {
-    const fetchResources = async () => {
-      try {
-        const token = localStorage.getItem('authToken');
-        const response = await axios.get('https://immersilearn-backend.onrender.com/api/professor/resources', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        setResources(response.data);
-      } catch (error) {
-        console.error('Error fetching resources:', error);
-      }
-    };
-    fetchResources();
-  }, []);
-
-  const handleAddBook = async () => {
-    try {
-      const token = localStorage.getItem('authToken');
-      await axios.post(
-        'https://immersilearn-backend.onrender.com/api/professor/resources',
-        { ...bookDetails, type: 'book' },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      // Handle success
-    } catch (error) {
-      console.error('Error adding book:', error);
-    }
-  };
-
-
+const Announcementss = () => {
+  const [announcements, setAnnouncements] = useState([
+    { 
+      id: 1, 
+      title: "Important Notice: Exam Tomorrow", 
+      content: "The final exam for Chemistry 101 will be held tomorrow at 10 AM in the main auditorium.",
+      date: "April 1, 2025" 
+    },
+    { 
+      id: 2, 
+      title: "New Study Material Released", 
+      content: "Chapter 5 supplementary materials are now available in the resource library.",
+      date: "April 3, 2025" 
+    },
+  ]);
 
   const [newAnnouncement, setNewAnnouncement] = useState({
     title: "",
     content: ""
   });
 
-  
-  
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!newAnnouncement.title || !newAnnouncement.content) return;
     
     const newAnn = {
       id: announcements.length + 1,
