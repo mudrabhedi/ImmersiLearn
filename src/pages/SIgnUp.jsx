@@ -1,16 +1,26 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom"; // If using React Router
+import React, { useState } from 'react';
+import axios from 'axios';
 
-const SignUp = () => {
-  const [formData, setFormData] = useState({ name: "", email: "", password: "" });
+import { useNavigate } from "react-router-dom";
+
+
+const Signup = () => {
+ const navigate = useNavigate(); // ← 2. Initialize it here
+  const [formData, setFormData] = useState({ name: '', email: '', password: '' });
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle signup logic here
+    try {
+      const res = await axios.post("http://localhost:5000/api/auth/signup", formData);
+      alert(res.data.message);
+      navigate("/subjects"); // ← 3. Redirect after success
+    } catch (err) {
+      alert("Signup failed: " + (err.response?.data?.message || err.message));
+    }
   };
 
   return (
@@ -44,21 +54,24 @@ const SignUp = () => {
           />
           <button
             type="submit"
-            className="w-full bg-[#0D9488] hover:bg-teal-700 text-white font-semibold py-2 rounded-md transition"
+            className="w-full bg-[#20C997] hover:bg-teal-600 text-white font-semibold py-2 rounded-md transition"
           >
             Sign Up
           </button>
         </form>
-
-        <p className="text-white mt-6 text-center">
-          Already have an account?{" "}
-          <Link to="/login" className="text-[#EB5757] font-medium hover:underline">
-            Login here
-          </Link>
-        </p>
+        <p className="text-center text-white">
+  Already have an account?{" "}
+  <a
+    href="/login"
+    className="text-[#EB5757] underline hover:text-red-300 transition duration-150"
+  >
+    Log in
+  </a>
+</p>
       </div>
+      
     </div>
   );
 };
 
-export default SignUp;
+export default Signup;
