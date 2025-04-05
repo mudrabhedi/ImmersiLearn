@@ -18,7 +18,7 @@ const SignupProfessor = () => {
     try {
       console.log('Attempting signup with:', formData);
       const res = await axios.post(
-        "http://localhost:5000/api/auth/signup-professor",
+        "https://immersilearn-backend.onrender.com/api/auth/signup-professor",
         { ...formData, role: "professor" },
         {
           headers: {
