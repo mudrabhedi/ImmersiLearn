@@ -13,7 +13,7 @@ const Leaderboard = () => {
   useEffect(() => {
     const fetchLeaderboard = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/leaderboard');
+        const response = await fetch('https://immersilearn-backend.onrender.com/api/leaderboard');
         if (!response.ok) {
          
         }
@@ -38,7 +38,7 @@ const Leaderboard = () => {
     setError('');
 
     try {
-      const response = await fetch('http://localhost:5000/api/leaderboard', {
+      const response = await fetch('https://immersilearn-backend.onrender.com/api/leaderboard', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, score: parseInt(score) }),
