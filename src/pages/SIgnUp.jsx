@@ -1,13 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-<<<<<<< HEAD
 import { Link } from 'react-router-dom';
 
 import { useNavigate } from "react-router-dom";
-
-=======
-import { Link, useNavigate } from 'react-router-dom';
->>>>>>> 0db2340 (Updated signup page)
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -111,18 +106,7 @@ const Signup = () => {
             Sign Up
           </button>
         </form>
-<<<<<<< HEAD
-        <p className="text-center text-white">
-  Already have an account?{" "}
-  <Link
-    to="/login"
-    className="text-[#EB5757] underline hover:text-red-300 transition duration-150"
-  >
-    Log in
-  </Link>
-</p>
 
-=======
 
         {/* Divider */}
         <div className="my-6 text-center text-gray-500 font-medium">— or continue with —</div>
@@ -139,7 +123,6 @@ const Signup = () => {
             Log in
           </Link>
         </p>
->>>>>>> 0db2340 (Updated signup page)
       </div>
     </div>
   );

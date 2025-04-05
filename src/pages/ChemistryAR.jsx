@@ -1,11 +1,9 @@
 import React, { useEffect, useRef } from "react";
 
-const BiologyAR = () => {
+const ChemistryAR = () => {
   const arItems = [
-    { title: "Heart", modelPath: "/models/humanheart.glb" },
-    { title: "Digestive System", modelPath: "/models/digestivesystem.glb" },
-    { title: "Skull", modelPath: "/models/skull.glb" },
-    { title: "Brain", modelPath: "/models/humanbrain.glb" },
+    { title: "Oxygen", modelPath: "/models/atom_oxygen.glb" },
+    { title: "Glucose", modelPath: "/models/glucosemolecule.glb" },
   ];
 
   const viewerRefs = useRef([]);
@@ -28,7 +26,7 @@ const BiologyAR = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#F0F9FF] to-[#E0F2FE] font-sans text-white px-6 py-10">
-      <h1 className="text-3xl font-extrabold text-center text-[#3B82F6] mb-10">Biology AR Models</h1>
+      <h1 className="text-3xl font-extrabold text-center text-[#3B82F6] mb-10">Chemistry AR Models</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
         {arItems.map((item, index) => (
           <div
@@ -59,4 +57,4 @@ const BiologyAR = () => {
   );
 };
 
-export default BiologyAR;
+export default ChemistryAR;
