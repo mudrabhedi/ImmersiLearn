@@ -33,42 +33,15 @@ const ProfessorProfile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
 
-    useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const token = localStorage.getItem('authToken');
-        const response = await axios.get('https://immersilearn-backend.onrender.com/api/professor/profile', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        setProfile(response.data);
-      } catch (error) {
-        console.error('Error fetching profile:', error);
-        if (error.response?.status === 401) {
-          navigate('/login');
-        }
-      }
-    };
-    fetchProfile();
-  }, [navigate]);
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setProfile({ ...profile, [name]: value });
   };
 
-  const handleSave = async () => {
-    try {
-      const token = localStorage.getItem('authToken');
-      await axios.put('https://immersilearn-backend.onrender.com/api/professor/profile', profile, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setIsEditing(false);
-    } catch (error) {
-      console.error('Error updating profile:', error);
-    }
+  const handleSave = () => {
+    setIsEditing(false);
+    // Here you would typically send the updated profile to your backend
   };
-
-  if (!profile) return <div>Loading...</div>;
 
   return (
     <div className="flex min-h-screen bg-gray-50">
