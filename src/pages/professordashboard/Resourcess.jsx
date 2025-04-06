@@ -1,59 +1,163 @@
 import React, { useState } from 'react';
 import { FiUpload, FiBook, FiFileText, FiCheckCircle, FiX } from 'react-icons/fi';
 import SidePanelProf from '../../components/SidePanelProf';
+import React, { useEffect } from 'react';
+// ... other imports
 
 const Resourcess = () => {
-  const [bookDetails, setBookDetails] = useState({
-    title: '',
-    author: '',
-    isbn: '',
-  });
-  const [file, setFile] = useState(null);
-  const [requestArVr, setRequestArVr] = useState(false);
-  const [activeTab, setActiveTab] = useState('books');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [successMessage, setSuccessMessage] = useState('');
+  const [resources, setResources] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  // ... your existing state
 
-  const handleBookDetailsChange = (e) => {
-    const { name, value } = e.target;
-    setBookDetails({ ...bookDetails, [name]: value });
-  };
+  useEffect(() => {
+    const fetchResources = async () => {
+      try {
+        setIsLoading(true);
+        const token = localStorage.getItem('authToken');
+        
+        const response = await fetch(
+          'https://immersilearn-backend.onrender.com/api/professor/resources', 
+          {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+          }
+        );
 
-  const handleFileUpload = (e) => {
-    const selectedFile = e.target.files[0];
-    if (selectedFile && selectedFile.size > 10 * 1024 * 1024) {
-      alert('File size exceeds 10MB limit');
-      return;
-    }
-    setFile(selectedFile);
-  };
+        if (!response.ok) {
+          throw new Error('Failed to fetch resources');
+        }
 
-  const handleRequestArVrChange = () => {
-    setRequestArVr(!requestArVr);
-  };
+        const data = await response.json();
+        setResources(data);
+      } catch (err) {
+        console.error('Error fetching resources:', err);
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
+    fetchResources();
+  }, []);
+
+  // Update handleAddBook to post to your backend
   const handleAddBook = async () => {
-    setIsSubmitting(true);
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    setSuccessMessage(`"${bookDetails.title}" added successfully!`);
-    setBookDetails({ title: '', author: '', isbn: '' });
-    setRequestArVr(false);
-    setIsSubmitting(false);
-    setTimeout(() => setSuccessMessage(''), 5000);
+    if (!bookDetails.title || !bookDetails.author) return;
+    
+    try {
+      setIsSubmitting(true);
+      const token = localStorage.getItem('authToken');
+      
+      const response = await fetch(
+        'https://immersilearn-backend.onrender.com/api/professor/resources', 
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            title: bookDetails.title,
+            type: 'book',
+            author: bookDetails.author,
+            isbn: bookDetails.isbn,
+            arVrRequested: requestArVr
+          })
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to add book');
+      }
+
+      const newResource = await response.json();
+      setResources([newResource, ...resources]);
+      
+      setSuccessMessage(`"${bookDetails.title}" added successfully!`);
+      setBookDetails({ title: '', author: '', isbn: '' });
+      setRequestArVr(false);
+    } catch (err) {
+      console.error('Error adding book:', err);
+      setError(err.message);
+    } finally {
+      setIsSubmitting(false);
+      setTimeout(() => setSuccessMessage(''), 5000);
+    }
   };
 
+  // Update handleUploadMaterial to upload files to your backend
   const handleUploadMaterial = async () => {
-    if (!file) {
-      alert('Please select a file first!');
-      return;
+    if (!file) return;
+    
+    try {
+      setIsSubmitting(true);
+      const token = localStorage.getItem('authToken');
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('type', 'material');
+
+      const response = await fetch(
+        'https://immersilearn-backend.onrender.com/api/professor/resources/upload', 
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
+          body: formData
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to upload material');
+      }
+
+      const newResource = await response.json();
+      setResources([newResource, ...resources]);
+      
+      setSuccessMessage(`"${file.name}" uploaded successfully!`);
+      setFile(null);
+    } catch (err) {
+      console.error('Error uploading material:', err);
+      setError(err.message);
+    } finally {
+      setIsSubmitting(false);
+      setTimeout(() => setSuccessMessage(''), 5000);
     }
-    setIsSubmitting(true);
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    setSuccessMessage(`"${file.name}" uploaded successfully!`);
-    setFile(null);
-    setIsSubmitting(false);
-    setTimeout(() => setSuccessMessage(''), 5000);
   };
+
+  // Add loading and error states to your JSX
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen bg-gray-50">
+        <SidePanelProf />
+        <div className="flex-1 p-8 flex items-center justify-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex min-h-screen bg-gray-50">
+        <SidePanelProf />
+        <div className="flex-1 p-8 flex items-center justify-center">
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+            <p>Error: {error}</p>
+            <button 
+              onClick={() => window.location.reload()}
+              className="mt-2 text-blue-600 hover:text-blue-800"
+            >
+              Try again
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen bg-gray-50">
