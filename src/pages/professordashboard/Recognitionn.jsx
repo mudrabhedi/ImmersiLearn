@@ -2,36 +2,109 @@ import React from 'react';
 import { FaTrophy, FaMedal, FaAward, FaPlus, FaStar, FaUserGraduate } from 'react-icons/fa';
 import SidePanelProf from '../../components/SidePanelProf';
 
+import React, { useEffect } from 'react';
+// ... other imports
+
 const Recognitionn = () => {
-  const students = [
-    {
-      id: 1,
-      name: "John Doe",
-      score: 95,
-      avatar: "/avatars/1.jpg",
-      badges: [
-        { name: "Top Scorer", icon: <FaTrophy className="mr-1" />, color: "from-yellow-400 to-yellow-500" },
-        { name: "Best Collaborator", icon: <FaUserGraduate className="mr-1" />, color: "from-blue-400 to-blue-600" }
-      ]
-    },
-    {
-      id: 2,
-      name: "Alex Johnson",
-      score: 88,
-      avatar: "/avatars/3.jpg",
-      badges: [
-        { name: "Fast Learner", icon: <FaStar className="mr-1" />, color: "from-purple-400 to-purple-600" },
-        { name: "Consistent Performer", icon: <FaMedal className="mr-1" />, color: "from-green-400 to-green-600" }
-      ]
-    }
-  ];
+  const [students, setStudents] = useState([]);
+  const [availableBadges, setAvailableBadges] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const availableBadges = [
-    { name: "Creative Thinker", icon: <FaAward />, color: "bg-pink-500" },
-    { name: "Problem Solver", icon: <FaMedal />, color: "bg-teal-500" },
-    { name: "Team Player", icon: <FaStar />, color: "bg-orange-500" },
-  ];
+  useEffect(() => {
+    const fetchRecognitionData = async () => {
+      try {
+        setIsLoading(true);
+        const token = localStorage.getItem('authToken');
+        
+        // Fetch students with their badges
+        const studentsResponse = await fetch(
+          'https://immersilearn-backend.onrender.com/api/students/recognitions',
+          {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+          }
+        );
 
+        if (!studentsResponse.ok) {
+          throw new Error('Failed to fetch student recognition data');
+        }
+
+        // Fetch available badges
+        const badgesResponse = await fetch(
+          'https://immersilearn-backend.onrender.com/api/badges',
+          {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+          }
+        );
+
+        if (!badgesResponse.ok) {
+          throw new Error('Failed to fetch available badges');
+        }
+
+        const studentsData = await studentsResponse.json();
+        const badgesData = await badgesResponse.json();
+
+        // Transform data to match your component structure
+        const transformedStudents = studentsData.map(student => ({
+          id: student._id,
+          name: student.name,
+          score: student.score || 0,
+          avatar: student.avatar || `/avatars/${Math.floor(Math.random() * 7) + 1}.jpg`,
+          badges: student.badges.map(badge => ({
+            name: badge.name,
+            icon: getBadgeIcon(badge.type),
+            color: getBadgeColor(badge.type)
+          }))
+        }));
+
+        const transformedBadges = badgesData.map(badge => ({
+          name: badge.name,
+          icon: getBadgeIcon(badge.type),
+          color: `bg-${badge.color}-500`
+        }));
+
+        setStudents(transformedStudents);
+        setAvailableBadges(transformedBadges);
+      } catch (err) {
+        console.error('Error fetching recognition data:', err);
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    // Helper function to get icon component based on badge type
+    const getBadgeIcon = (type) => {
+      switch(type) {
+        case 'trophy': return <FaTrophy className="mr-1" />;
+        case 'medal': return <FaMedal className="mr-1" />;
+        case 'award': return <FaAward className="mr-1" />;
+        case 'star': return <FaStar className="mr-1" />;
+        case 'graduate': return <FaUserGraduate className="mr-1" />;
+        default: return <FaAward className="mr-1" />;
+      }
+    };
+
+    // Helper function to get gradient color based on badge type
+    const getBadgeColor = (type) => {
+      switch(type) {
+        case 'trophy': return 'from-yellow-400 to-yellow-500';
+        case 'medal': return 'from-gray-300 to-gray-400';
+        case 'award': return 'from-purple-400 to-purple-600';
+        case 'star': return 'from-blue-400 to-blue-600';
+        case 'graduate': return 'from-green-400 to-green-600';
+        default: return 'from-indigo-400 to-indigo-600';
+      }
+    };
+
+    fetchRecognitionData();
+  }, []);
   return (
     <div className="flex min-h-screen bg-gray-50">
       {/* Side Panel */}
